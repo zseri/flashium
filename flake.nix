@@ -3,8 +3,9 @@
   inputs.nixpkgs.url = "github:nixos/nixpkgs?rev=f63bc540cbd559736f1671e4ee10e4560b3d5d2a";
   outputs = { self, nixpkgs }:
     let
-      pwl = ["chromium" "ungoogled-chromium"];
-      suffix = "-yflashed";
+      pwl = ["" "ungoogled-"];
+      oldname = "chromium";
+      newname = "flashium";
       attrsets = nixpkgs.lib.attrsets;
     in {
       overlay = final: prev: (
@@ -26,26 +27,31 @@
                   tmpmid=$(echo "$i"| cut -f1 -d' ')
                   tmpsfx=$(echo "$i"| cut -f2 -d' ')
                   mkdir -p $out/$tmpmid
-                  ln -s "${newchrom}/$tmpmid/chromium$tmpsfx" "$out/$tmpmid/chromium${suffix}$tmpsfx"
+                  ln -s "${newchrom}/$tmpmid/${oldname}$tmpsfx" "$out/$tmpmid/${newname}$tmpsfx"
                 done
 
                 ${lndir}/bin/lndir -silent ${newchrom}/share/icons $out/share/icons
                 for i in $out/share/icons/*/*; do
-                  mv -T "$i" "''${i/chromium/chromium${suffix}}"
+                  mv -T "$i" "''${i/${oldname}/${newname}}"
                 done
 
-                cp -T ${newchrom}/share/applications/chromium-browser.desktop $out/share/applications/chromium-browser${suffix}.desktop
-                substituteInPlace $out/share/applications/chromium-browser${suffix}.desktop \
-                  --replace chromium-browser chromium-browser${suffix} \
-                  --replace chromium chromium${suffix} \
-                  --replace Chromium Chromium${suffix}
+                cp -T ${newchrom}/share/applications/${oldname}-browser.desktop $out/share/applications/${newname}-browser.desktop
+                substituteInPlace $out/share/applications/${newname}-browser.desktop \
+                  --replace ${oldname}-browser ${namename}-browser \
+                  --replace ${oldname} ${newname} \
+                  --replace Chromium Flashium
               '';
             }
           );
         in
-          attrsets.mapAttrs'
-            (name: value: attrsets.nameValuePair (name + suffix) value)
-            (attrsets.genAttrs pwl translate)
+          attrsets.listToAttrs (
+            builtins.map
+              (n: {
+                name = n + newname;
+                value = translate (n + oldname);
+              })
+              pwl
+          )
       );
     };
 }
