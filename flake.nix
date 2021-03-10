@@ -17,11 +17,12 @@
             inherit (final) system;
             config.allowUnfree = true;
           };
+          lndir = final.xorg.lndir;
           translate = (pname: newchrom: final.stdenvNoCC.mkDerivation {
             inherit pname;
             inherit (newchrom) version;
 
-            nativeBuildInputs = [ final.lndir ];
+            nativeBuildInputs = [ lndir ];
             buildInputs = [ newchrom ];
             buildCommand = ''
               mkdir -p $out/share
@@ -34,7 +35,7 @@
                 ln -s "${newchrom}/$tmpmid/${oldname}$tmpsfx" "$out/$tmpmid/${newname}$tmpsfx"
               done
 
-              ${final.lndir}/bin/lndir -silent ${newchrom}/share/icons $out/share/icons
+              ${lndir}/bin/lndir -silent ${newchrom}/share/icons $out/share/icons
               for i in $out/share/icons/*/*; do
                 mv -T "$i" "''${i/${oldname}/${newname}}"
               done
