@@ -1,6 +1,11 @@
 {
   description = "Pinned, old chromium with an old flash player";
-  inputs.nixpkgs.url = "github:nixos/nixpkgs?rev=f63bc540cbd559736f1671e4ee10e4560b3d5d2a";
+  inputs.nixpkgs = {
+    url = "github:nixos/nixpkgs?rev=f63bc540cbd559736f1671e4ee10e4560b3d5d2a";
+    # fix 'nixpkgs ... has unsupported attribute edition'
+    flake = false;
+  };
+
   outputs = { self, nixpkgs }:
     let
       pwl = ["" "ungoogled-"];
