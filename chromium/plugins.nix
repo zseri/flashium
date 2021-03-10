@@ -3,7 +3,7 @@
 , glib
 , nspr
 , nss
-, fetchzip
+, unzip
 , enablePepperFlash ? false
 
 , upstream-info
@@ -53,6 +53,18 @@ let
     #  sha256 = "0znk8an892mykgbz56hyv3gz65vc9mhb3vn96c6bsvicwl1fn460";
     #  stripRoot = false;
     #};
+
+    nativeBuildInputs = [ unzip ];
+
+    unpackPhase = ''
+      unpackDir="$TMPDIR/unpack"
+      mkdir "$unpackDir"
+      cd "$unpackDir"
+      renamed="$TMPDIR/${baseNameOf src}"
+      cp -T "${src}" "$renamed"
+      unpackFile "$renamed"
+      mv "$unpackDir" "$out"
+    '';
 
     patchPhase = ''
       chmod +x libpepflashplayer.so
