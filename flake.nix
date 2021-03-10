@@ -11,10 +11,12 @@
       pwl = ["" "ungoogled-"];
       oldname = "chromium";
       newname = "flashium";
-      nixpkgs' = import nixpkgs {};
     in {
       overlay = final: prev: (
         let
+          nixpkgs' = import nixpkgs {
+            inherit (final) system;
+          };
           translate = (pname: newchrom: final.stdenvNoCC.mkDerivation {
             inherit pname;
             inherit (newchrom) version;
