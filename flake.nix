@@ -34,7 +34,6 @@
 
               cp -T ${newchrom}/share/applications/${oldname}-browser.desktop $out/share/applications/${newname}-browser.desktop
               substituteInPlace $out/share/applications/${newname}-browser.desktop \
-                --replace ${oldname}-browser ${namename}-browser \
                 --replace ${oldname} ${newname} \
                 --replace Chromium Flashium
             '';
