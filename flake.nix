@@ -47,7 +47,9 @@
             builtins.map
               (n: rec {
                 name = n + newname;
-                value = translate name (nixpkgs.legacyPackages.${n + oldname}.override { enablePepperFlash = true; });
+                value = builtins.trace
+                  (builtins.concatStringsSep " " (builtins.attrNames nixpkgs))
+                  (translate name (nixpkgs.legacyPackages.${n + oldname}.override { enablePepperFlash = true; }));
               })
               pwl
           )
