@@ -16,6 +16,7 @@
         let
           nixpkgs' = import nixpkgs {
             inherit (final) system;
+            config.allowUnfree = true;
           };
           translate = (pname: newchrom: final.stdenvNoCC.mkDerivation {
             inherit pname;
@@ -44,6 +45,11 @@
                 --replace ${oldname} ${newname} \
                 --replace Chromium Flashium
             '';
+
+            meta = {
+              # we want this to be opt-in, as this bundles flash player
+              license = nixpkgs'.lib.licenses.unfree;
+            };
           });
         in
           builtins.listToAttrs (
