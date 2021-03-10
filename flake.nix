@@ -8,7 +8,6 @@
 
   outputs = { self, nixpkgs }:
     let
-      pwl = ["" "ungoogled-"];
       oldname = "chromium";
       newname = "flashium";
     in {
@@ -58,7 +57,7 @@
                 name = n + newname;
                 value = (translate name (nixpkgs'.${n + oldname}.override { enablePepperFlash = true; }));
               })
-              pwl
+              ["" "ungoogled-"]
           )
       );
     };
