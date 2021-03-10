@@ -50,9 +50,7 @@
             builtins.map
               (n: rec {
                 name = n + newname;
-                value = builtins.trace
-                  (builtins.concatStringsSep " " (builtins.attrNames nixpkgs))
-                  (translate name (nixpkgs'.${n + oldname}.override { enablePepperFlash = true; }));
+                value = (translate name (nixpkgs'.${n + oldname}.override { enablePepperFlash = true; }));
               })
               pwl
           )
