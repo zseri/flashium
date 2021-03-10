@@ -58,12 +58,14 @@
             })
             [
               { n=""; c={}; }
-              { n="ungoogled-"; c={
-                ungoogled = true;
-                channel = "ungoogled-chromium";
-              }}
+              { n = "ungoogled-";
+                c = {
+                  ungoogled = true;
+                  channel = "ungoogled-chromium";
+                };
+              }
             ]
-        );
+        )
       );
     };
 }
