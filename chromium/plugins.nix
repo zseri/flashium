@@ -67,6 +67,7 @@ let
     '';
 
     patchPhase = ''
+      ls -las
       chmod +x libpepflashplayer.so
       patchelf --set-rpath "${mkrpath [ gcc.cc ]}" libpepflashplayer.so
     '';
