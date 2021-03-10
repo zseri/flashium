@@ -11,6 +11,7 @@
       pwl = ["" "ungoogled-"];
       oldname = "chromium";
       newname = "flashium";
+      nixpkgs' = import nixpkgs {};
     in {
       overlay = final: prev: (
         let
@@ -49,7 +50,7 @@
                 name = n + newname;
                 value = builtins.trace
                   (builtins.concatStringsSep " " (builtins.attrNames nixpkgs))
-                  (translate name (nixpkgs.legacyPackages.${n + oldname}.override { enablePepperFlash = true; }));
+                  (translate name (nixpkgs'.${n + oldname}.override { enablePepperFlash = true; }));
               })
               pwl
           )
