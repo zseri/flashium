@@ -56,17 +56,8 @@ let
 
     nativeBuildInputs = [ unzip ];
 
-    unpackPhase = ''
-      unpackDir="$TMPDIR/unpack"
-      mkdir "$unpackDir"
-      cd "$unpackDir"
-      renamed="$TMPDIR/${baseNameOf src}"
-      cp -T "${src}" "$renamed"
-      unpackFile "$renamed"
-      mv "$unpackDir" "$out"
-    '';
-
     patchPhase = ''
+      cd ..
       ls -las
       chmod +x libpepflashplayer.so
       patchelf --set-rpath "${mkrpath [ gcc.cc ]}" libpepflashplayer.so
