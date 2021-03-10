@@ -11,7 +11,6 @@
       pwl = ["" "ungoogled-"];
       oldname = "chromium";
       newname = "flashium";
-      attrsets = nixpkgs.lib.attrsets;
     in {
       overlay = final: prev: (
         let
@@ -44,7 +43,7 @@
             '';
           });
         in
-          attrsets.listToAttrs (
+          builtins.listToAttrs (
             builtins.map
               (n: rec {
                 name = n + newname;
