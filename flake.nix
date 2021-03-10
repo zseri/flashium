@@ -1,8 +1,7 @@
 {
   description = "Pinned, old chromium with an old flash player";
   inputs.nixpkgs = {
-    url = "github:nixos/nixpkgs?rev=f63bc540cbd559736f1671e4ee10e4560b3d5d2a";
-    # fix 'nixpkgs ... has unsupported attribute edition'
+    url = "github:nixos/nixpkgs?rev=3a21f65a0b1960148460c9066898480540403572";
     flake = false;
   };
 
@@ -51,15 +50,20 @@
               license = nixpkgs'.lib.licenses.unfree;
             };
           });
-        in
-          builtins.listToAttrs (
-            builtins.map
-              (n: rec {
-                name = n + newname;
-                value = (translate name (nixpkgs'.${n + oldname}.override { enablePepperFlash = true; }));
-              })
-              ["" "ungoogled-"]
-          )
+        in builtins.listToAttrs (
+          builtins.map
+            ({n, c}: rec {
+              name = n + newname;
+              value = (translate name (nixpkgs'.callPackage ./chromium (c // { enablePepperFlash = true; })));
+            })
+            [
+              { n=""; c={}; }
+              { n="ungoogled-"; c={
+                ungoogled = true;
+                channel = "ungoogled-chromium";
+              }}
+            ]
+        );
       );
     };
 }
