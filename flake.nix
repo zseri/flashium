@@ -13,29 +13,20 @@
             inherit (final) system;
             config.allowUnfree = true;
           };
-          lndir = final.xorg.lndir;
-          translate = (pname: newchrom: final.stdenvNoCC.mkDerivation {
+          translate = (pname: newchrom: final.stdenvNoCC.mkDerivation rec {
             inherit pname;
             inherit (newchrom) version;
 
-            nativeBuildInputs = [ lndir ];
+            mylnx = final.substituteAll {
+              src = ./flashium_lnx.sh;
+              inherit (final) bash coreutils gnused;
+              inherit newchrom;
+            };
+            nativeBuildInputs = [ final.findutils mylnx ];
             buildInputs = [ newchrom ];
             buildCommand = ''
-              mkdir -p $out/share
-              mkdir $out/share/applications $out/share/icons
-
-              for i in 'bin ' 'share/man/man1 .1'; do
-                tmpmid=$(echo "$i"| cut -f1 -d' ')
-                tmpsfx=$(echo "$i"| cut -f2 -d' ')
-                mkdir -p $out/$tmpmid
-                ln -s "${newchrom}/$tmpmid/chromium$tmpsfx" "$out/$tmpmid/flashium$tmpsfx"
-              done
-
-              ${lndir}/bin/lndir -silent ${newchrom}/share/icons $out/share/icons
-              for i in $out/share/icons/hicolor/*/apps/*; do
-                mv -T "$i" "''${i/chromium/flashium}"
-              done
-
+              ${findutils}/bin/find -L ${newchrom} '!' -type d -execdir '${mylnx}' '{}' "$out"
+              rm "$out/share/applications/flashium-browser.desktop"
               cp -T ${newchrom}/share/applications/chromium-browser.desktop $out/share/applications/flashium-browser.desktop
               substituteInPlace $out/share/applications/flashium-browser.desktop \
                 --replace chromium flashium \
