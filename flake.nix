@@ -24,7 +24,7 @@
               inherit (final) bash coreutils gnused;
               inherit newchrom;
             };
-            nativeBuildInputs = [ findutils mylnx ];
+            nativeBuildInputs = [ findutils ];
             buildInputs = [ newchrom ];
             buildCommand = ''
               ${findutils}/bin/find -L ${newchrom} '!' -type d -execdir '${mylnx}' '{}' "$out"
