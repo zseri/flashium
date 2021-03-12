@@ -6,10 +6,7 @@
   };
 
   outputs = { self, nixpkgs }:
-    let
-      oldname = "chromium";
-      newname = "flashium";
-    in {
+    {
       overlay = final: prev: (
         let
           nixpkgs' = import nixpkgs {
@@ -31,17 +28,17 @@
                 tmpmid=$(echo "$i"| cut -f1 -d' ')
                 tmpsfx=$(echo "$i"| cut -f2 -d' ')
                 mkdir -p $out/$tmpmid
-                ln -s "${newchrom}/$tmpmid/${oldname}$tmpsfx" "$out/$tmpmid/${newname}$tmpsfx"
+                ln -s "${newchrom}/$tmpmid/chromium$tmpsfx" "$out/$tmpmid/flashium$tmpsfx"
               done
 
               ${lndir}/bin/lndir -silent ${newchrom}/share/icons $out/share/icons
               for i in $out/share/icons/*/*; do
-                mv -T "$i" "''${i/${oldname}/${newname}}"
+                mv -T "$i" "''${i/chromium/flashium}"
               done
 
-              cp -T ${newchrom}/share/applications/${oldname}-browser.desktop $out/share/applications/${newname}-browser.desktop
-              substituteInPlace $out/share/applications/${newname}-browser.desktop \
-                --replace ${oldname} ${newname} \
+              cp -T ${newchrom}/share/applications/chromium-browser.desktop $out/share/applications/flashium-browser.desktop
+              substituteInPlace $out/share/applications/flashium-browser.desktop \
+                --replace chromium flashium \
                 --replace Chromium Flashium
             '';
 
@@ -53,7 +50,7 @@
         in builtins.listToAttrs (
           builtins.map
             ({n, c}: rec {
-              name = n + newname;
+              name = n + "flashium";
               value = (translate name (nixpkgs'.callPackage ./chromium (c // { enablePepperFlash = true; })));
             })
             [
