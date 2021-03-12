@@ -13,6 +13,7 @@
             inherit (final) system;
             config.allowUnfree = true;
           };
+          findutils = final.findutils;
           translate = (pname: newchrom: final.stdenvNoCC.mkDerivation rec {
             inherit pname;
             inherit (newchrom) version;
@@ -22,7 +23,7 @@
               inherit (final) bash coreutils gnused;
               inherit newchrom;
             };
-            nativeBuildInputs = [ final.findutils mylnx ];
+            nativeBuildInputs = [ findutils mylnx ];
             buildInputs = [ newchrom ];
             buildCommand = ''
               ${findutils}/bin/find -L ${newchrom} '!' -type d -execdir '${mylnx}' '{}' "$out"
