@@ -27,7 +27,7 @@
             nativeBuildInputs = [ findutils ];
             buildInputs = [ newchrom ];
             buildCommand = ''
-              ${findutils}/bin/find -L ${newchrom} '!' -type d -execdir '${mylnx}' '{}' "$out"
+              ${findutils}/bin/find -L ${newchrom} '!' -type d -execdir '${mylnx}' '{}' ';'
               rm "$out/share/applications/flashium-browser.desktop"
               cp -T ${newchrom}/share/applications/chromium-browser.desktop $out/share/applications/flashium-browser.desktop
               substituteInPlace $out/share/applications/flashium-browser.desktop \
