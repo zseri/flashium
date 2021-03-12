@@ -47,18 +47,15 @@ let
     version = "32.0.0.363";
 
     # (zseri) *** modified *** the upstream is gone
-    src = ../distfiles + "/adobe-flash-${version}-ppapi.x86_64.tar.gz";
-    #src = fetchzip {
-    #  url = "https://fpdownload.adobe.com/pub/flashplayer/pdc/${version}/flash_player_ppapi_linux.x86_64.tar.gz";
-    #  sha256 = "0znk8an892mykgbz56hyv3gz65vc9mhb3vn96c6bsvicwl1fn460";
-    #  stripRoot = false;
-    #};
+    src = fetchzip {
+      url = "https://ytrizja.de/legacy/adobe-flash-${version}-ppapi.x86_64.tar.gz";
+      sha256 = "0znk8an892mykgbz56hyv3gz65vc9mhb3vn96c6bsvicwl1fn460";
+      stripRoot = false;
+    };
 
     nativeBuildInputs = [ unzip ];
 
     patchPhase = ''
-      cd ..
-      ls -las
       chmod +x libpepflashplayer.so
       patchelf --set-rpath "${mkrpath [ gcc.cc ]}" libpepflashplayer.so
     '';
