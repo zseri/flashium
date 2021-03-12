@@ -1,11 +1,11 @@
 { stdenv, gcc
-, jshon
+, fetchzip
 , glib
+, jshon
 , nspr
 , nss
 , unzip
 , enablePepperFlash ? false
-
 , upstream-info
 }:
 
