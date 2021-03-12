@@ -32,7 +32,7 @@
               done
 
               ${lndir}/bin/lndir -silent ${newchrom}/share/icons $out/share/icons
-              for i in $out/share/icons/*/*; do
+              for i in $out/share/icons/hicolor/*/apps/*; do
                 mv -T "$i" "''${i/chromium/flashium}"
               done
 
