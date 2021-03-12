@@ -2,7 +2,7 @@
 
 # USAGE: flashium_lndir.sh PATH_FROM_CHROMIUM
 export PATH=''
-src="$(@coreutils@/realpath "$1")"
+src="$(@coreutils@/bin/realpath "$1")"
 trg="$(echo "$src" | '@gnused@/bin/sed' -e "s#@newchrom@#$out#" -e 's#chromium#flashium#')"
 echo "$src -> $trg"
 @coreutils@/bin/mkdir -p "$(@coreutils@/bin/dirname "$trg")"
