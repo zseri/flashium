@@ -20,6 +20,7 @@
 
             mylnx = final.substituteAll {
               src = ./flashium_lnx.sh;
+              isExecutable = true;
               inherit (final) bash coreutils gnused;
               inherit newchrom;
             };
