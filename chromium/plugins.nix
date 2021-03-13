@@ -1,11 +1,13 @@
 { stdenv, gcc
-, fetchzip
-, glib
 , jshon
+, glib
 , nspr
 , nss
-, unzip
+, fetchzip
+, patchelfUnstable
 , enablePepperFlash ? false
+, enableWideVine ? false
+
 , upstream-info
 }:
 
@@ -42,6 +44,60 @@ let
     echo ${toString quoted} > "''$${output}/nix-support/wrapper-flags"
   '';
 
+  widevine = stdenv.mkDerivation {
+    name = "chromium-binary-plugin-widevine";
+
+    src = upstream-info.binary;
+
+    nativeBuildInputs = [ patchelfUnstable ];
+
+    phases = [ "unpackPhase" "patchPhase" "installPhase" "checkPhase" ];
+
+    unpackCmd = let
+      chan = if upstream-info.channel == "dev"    then "chrome-unstable"
+        else if upstream-info.channel == "stable" then "chrome"
+        else "chrome-${upstream-info.channel}";
+    in ''
+      mkdir -p plugins
+      ar p "$src" data.tar.xz | tar xJ -C plugins --strip-components=4 \
+        ./opt/google/${chan}/libwidevinecdm.so \
+        ./opt/google/${chan}/libwidevinecdmadapter.so
+    '';
+
+    doCheck = true;
+    checkPhase = ''
+      ! find -iname '*.so' -exec ldd {} + | grep 'not found'
+    '';
+
+    PATCH_RPATH = mkrpath [ gcc.cc glib nspr nss ];
+
+    patchPhase = ''
+      chmod +x libwidevinecdm.so libwidevinecdmadapter.so
+      patchelf --set-rpath "$PATCH_RPATH" libwidevinecdm.so
+      patchelf --set-rpath "$out/lib:$PATCH_RPATH" libwidevinecdmadapter.so
+    '';
+
+    installPhase = let
+      wvName = "Widevine Content Decryption Module";
+      wvDescription = "Playback of encrypted HTML audio/video content";
+      wvMimeTypes = "application/x-ppapi-widevine-cdm";
+      wvModule = "@out@/lib/libwidevinecdmadapter.so";
+      wvInfo = "#${wvName}#${wvDescription};${wvMimeTypes}";
+    in ''
+      install -vD libwidevinecdm.so \
+        "$out/lib/libwidevinecdm.so"
+      install -vD libwidevinecdmadapter.so \
+        "$out/lib/libwidevinecdmadapter.so"
+
+      ${mkPluginInfo {
+        flags = [ "--register-pepper-plugins=${wvModule}${wvInfo}" ];
+        envVars.NIX_CHROMIUM_PLUGIN_PATH_WIDEVINE = "@out@/lib";
+      }}
+    '';
+
+    meta.platforms = platforms.x86_64;
+  };
+
   flash = stdenv.mkDerivation rec {
     pname = "flashplayer-ppapi";
     version = "32.0.0.363";
@@ -52,8 +108,6 @@ let
       sha256 = "0znk8an892mykgbz56hyv3gz65vc9mhb3vn96c6bsvicwl1fn460";
       stripRoot = false;
     };
-
-    nativeBuildInputs = [ unzip ];
 
     patchPhase = ''
       chmod +x libpepflashplayer.so
@@ -85,11 +139,11 @@ let
 
     meta = {
       license = stdenv.lib.licenses.unfree;
-      maintainers = with stdenv.lib.maintainers; [ taku0 ];
       platforms = platforms.x86_64;
     };
   };
 
 in {
-  enabled = optional enablePepperFlash flash;
+  enabled = optional enableWideVine widevine
+         ++ optional enablePepperFlash flash;
 }

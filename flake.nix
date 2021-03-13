@@ -1,7 +1,7 @@
 {
   description = "Pinned, old chromium with an old flash player";
   inputs.nixpkgs = {
-    url = "github:nixos/nixpkgs?rev=3a21f65a0b1960148460c9066898480540403572";
+    url = "github:nixos/nixpkgs?rev=6a0a07318763375dd90125fdf73f690e6c49687e";
     flake = false;
   };
 
@@ -14,8 +14,10 @@
             config.allowUnfree = true;
           };
           findutils = final.findutils;
-          translate = (pname: newchrom: final.stdenvNoCC.mkDerivation rec {
-            inherit pname;
+          newchrom = nixpkgs'.callPackage ./chromium { enablePepperFlash = true; };
+        in {
+          flashium = final.stdenvNoCC.mkDerivation rec {
+            pname = "flashium";
             inherit (newchrom) version;
 
             mylnx = final.substituteAll {
@@ -38,23 +40,8 @@
               # we want this to be opt-in, as this bundles flash player
               license = nixpkgs'.lib.licenses.unfree;
             };
-          });
-        in builtins.listToAttrs (
-          builtins.map
-            ({n, c}: rec {
-              name = n + "flashium";
-              value = (translate name (nixpkgs'.callPackage ./chromium (c // { enablePepperFlash = true; })));
-            })
-            [
-              { n=""; c={}; }
-              { n = "ungoogled-";
-                c = {
-                  ungoogled = true;
-                  channel = "ungoogled-chromium";
-                };
-              }
-            ]
-        )
+          };
+        }
       );
     };
 }
