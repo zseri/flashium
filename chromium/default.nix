@@ -15,6 +15,9 @@
 , cupsSupport ? true
 , pulseSupport ? config.pulseaudio or stdenv.isLinux
 , commandLineArgs ? ""
+
+# allow us to pass the whole nixpkgs
+, ...
 }:
 
 let

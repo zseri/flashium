@@ -14,11 +14,7 @@
             config.allowUnfree = true;
           };
           findutils = final.findutils;
-          newchrom = nixpkgs'.callPackage ./chromium {
-            inherit (nixpkgs') newScope config stdenv llvmPackages gcc8Stdenv llvmPackages_8
-                               makeWrapper ed glib gtk3 gnome3 gsettings-desktop-schemas;
-            enablePepperFlash = true;
-          };
+          newchrom = nixpkgs'.callPackage ./chromium (nixpkgs' // { enablePepperFlash = true; });
         in {
           flashium = final.stdenvNoCC.mkDerivation rec {
             pname = "flashium";
