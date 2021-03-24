@@ -12,6 +12,7 @@
 , cupsSupport ? true
 , pulseSupport ? false
 , commandLineArgs ? ""
+, ...
 }:
 
 let
