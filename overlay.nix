@@ -1,11 +1,7 @@
 final: nixpkgs:
 let
-  nixpkgs' = import nixpkgs {
-    inherit (final) system;
-    config.allowUnfree = true;
-  };
   findutils = final.findutils;
-  newchrom = nixpkgs'.callPackage ./chromium (nixpkgs' // { enablePepperFlash = true; });
+  newchrom = nixpkgs.callPackage ./chromium (nixpkgs // { enablePepperFlash = true; });
 in {
   flashium = final.stdenvNoCC.mkDerivation rec {
     pname = "flashium";
@@ -29,7 +25,7 @@ in {
 
     meta = {
       # we want this to be opt-in, as this bundles flash player
-      license = nixpkgs'.lib.licenses.unfree;
+      license = nixpkgs.lib.licenses.unfree;
     };
   };
 }

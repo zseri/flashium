@@ -1,3 +1,0 @@
-f = builtins.getFlake (toString ./.)
-:b (f.overlay (import <nixpkgs> {}) <nixpkgs>).flashium
-nix-shell -p nixUnstable --run "nix repl --experimental-features 'nix-command flakes'"
