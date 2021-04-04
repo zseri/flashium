@@ -141,7 +141,6 @@ let
       ./patches/fix-freetype.patch
       ./patches/nix_plugin_paths_68.patch
       ./patches/remove-webp-include-69.patch
-      ./patches/zz-fonts-stuff.patch
     ] ++ optional enableWideVine ./patches/widevine.patch
       ++ optional ((versionRange "69" "70") && stdenv.isAarch64)
            (fetchpatch {
