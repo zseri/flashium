@@ -16,6 +16,8 @@
 , protobuf, speechd, libXdamage, cups
 , ffmpeg, libxslt, libxml2, at-spi2-core
 
+, paxctl
+
 # optional dependencies
 , libgcrypt ? null # gnomeSupport || cupsSupport
 
@@ -116,7 +118,7 @@ let
     nativeBuildInputs = [
       ninja which python2Packages.python perl pkgconfig
       python2Packages.ply python2Packages.jinja2 nodejs
-      gnutar
+      gnutar paxctl
     ];
 
     buildInputs = defaultDependencies ++ [
@@ -287,7 +289,8 @@ let
           process_template chrome/app/resources/manpage.1.in "${buildPath}/chrome.1"
         )
       '' + optionalString (target == "mksnapshot" || target == "chrome") ''
-        paxmark m "${buildPath}/${target}"
+        ${paxctl}/bin/paxctl -c "${buildPath}/${target}"
+        ${paxctl}/bin/paxctl -zex -m "${buildPath}/${target}"
       '';
       targets = extraAttrs.buildTargets or [];
       commands = map buildCommand targets;
