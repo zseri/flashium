@@ -28,7 +28,7 @@
 , gnomeKeyringSupport ? false, libgnome-keyring3 ? null
 , proprietaryCodecs ? true
 , cupsSupport ? true
-, pulseSupport ? false, libpulseaudio ? null
+, pulseSupport ? true, libpulseaudio ? null
 
 , upstream-info
 }:

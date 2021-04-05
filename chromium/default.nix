@@ -10,7 +10,7 @@
 , enablePepperFlash ? false
 , enableWideVine ? false
 , cupsSupport ? true
-, pulseSupport ? false
+, pulseSupport ? true
 , commandLineArgs ? ""
 , ...
 }:
