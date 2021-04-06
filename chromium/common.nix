@@ -278,9 +278,10 @@ let
       # -j is halved to avoid memory problems, and -l is slightly increased
       # so that the build gets slight preference before others
       # (it will often be on "critical path" and at risk of timing out)
+      # lol, ignore that
       buildCommand = target: ''
-        ninja -C "${buildPath}"  \
-          -j$(( ($NIX_BUILD_CORES+1) / 2 )) -l$(( $NIX_BUILD_CORES+1 )) \
+        ninja -v -C "${buildPath}" \
+          -j$NIX_BUILD_CORES -l$(( $NIX_BUILD_CORES+1 )) \
           "${target}"
         (
           source chrome/installer/linux/common/installer.include
